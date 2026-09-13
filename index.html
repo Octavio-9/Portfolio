@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Octave Adanou — Développeur Web Full-Stack</title>
+<meta name="description" content="Octave Adanou, développeur web full-stack freelance. Je conçois des sites et applications rapides, fiables et sur-mesure." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ==========================================================================
+   TOKENS
+   ========================================================================== */
+:root{
+  --ink:#151515;
+  --paper:#ffffff;
+  --mist:#f3f3f1;
+  --shell:#e6e6e3;
+  --muted:#6b6b6b;
+  --accent:#d9653b;
+  --accent-soft:#f6e6df;
+  --line:rgba(21,21,21,.10);
+  --line-strong:rgba(21,21,21,.18);
+
+  --display:"Poppins",system-ui,sans-serif;
+  --sans:"Manrope",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  --r-lg:28px;
+  --r-md:18px;
+  --r-sm:12px;
+
+  --shadow-card:0 20px 50px -30px rgb(0 0 0 / .35);
+  --shadow-nav:0 25px 50px -12px rgb(0 0 0 / .25);
+
+  --pad:clamp(20px,5vw,56px);
+  --max:1180px;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+html{scroll-behavior:smooth;background:var(--shell)}
+
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background:var(--shell);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* The whole page sits on a rounded "sheet" floating over a soft shell ------- */
+.sheet{
+  background:var(--paper);
+  border-radius:clamp(16px,2.4vw,34px);
+  margin:clamp(8px,1.2vw,18px);
+  overflow:hidden;
+  position:relative;
+}
+
+.wrap{max-width:var(--max);margin-inline:auto;padding-inline:var(--pad)}
+
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+
+/* ==========================================================================
+   SHARED TYPE
+   ========================================================================== */
+.mono{
+  font-family:var(--mono);
+  font-size:.72rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.section{padding:clamp(72px,10vw,140px) 0}
+
+.section-head{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:24px;flex-wrap:wrap;
+  margin-bottom:clamp(36px,5vw,64px);
+}
+
+.section-title{
+  font-family:var(--display);
+  font-weight:700;
+  font-size:clamp(2rem,5.4vw,3.6rem);
+  line-height:1;
+  letter-spacing:-.02em;
+}
+.section-title i{font-style:normal;color:var(--accent)}
+
+.lede{color:var(--muted);max-width:46ch;font-size:1.02rem}
+
+/* Buttons ------------------------------------------------------------------ */
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--ink);color:#fff;
+  font-weight:600;font-size:.95rem;
+  padding:15px 26px;border-radius:999px;
+  transition:transform .25s cubic-bezier(.22,1,.36,1),background .25s,box-shadow .25s;
+  box-shadow:0 14px 30px -18px rgba(21,21,21,.9);
+}
+.btn:hover{transform:translateY(-3px);background:var(--accent);box-shadow:0 18px 34px -16px rgba(217,101,59,.7)}
+.btn .arw{transition:transform .25s}
+.btn:hover .arw{transform:translate(3px,-3px)}
+
+.btn-ghost{
+  background:transparent;color:var(--ink);
+  border:1px solid var(--line-strong);
+  box-shadow:none;
+}
+.btn-ghost:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* ==========================================================================
+   LOADER
+   ========================================================================== */
+#loader{
+  position:fixed;inset:0;z-index:999;
+  background:#141414;color:#8a8a8a;
+  display:grid;place-items:center;
+  font-family:var(--mono);font-size:.8rem;letter-spacing:.14em;
+  transition:opacity .6s ease,visibility .6s;
+}
+#loader .count{
+  position:absolute;right:clamp(16px,4vw,54px);bottom:clamp(8px,3vw,28px);
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(4rem,12vw,9rem);color:#242424;line-height:.8;
+}
+#loader.done{opacity:0;visibility:hidden}
+
+/* ==========================================================================
+   NAV
+   ========================================================================== */
+.nav{
+  position:fixed;top:clamp(14px,2vw,26px);left:50%;transform:translateX(-50%);
+  z-index:60;width:min(var(--max),calc(100vw - 2*var(--pad)));
+  display:flex;align-items:center;gap:8px;
+  background:rgba(20,20,20,.85);
+  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:999px;
+  padding:8px 8px 8px 16px;
+  box-shadow:var(--shadow-nav);
+  color:#f2f2f2;
+}
+
+.status{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:.78rem;color:#cfcfcf;white-space:nowrap;
+  padding-right:14px;
+}
+.dot{
+  width:8px;height:8px;border-radius:50%;background:#4ade80;
+  box-shadow:0 0 0 0 rgba(74,222,128,.6);
+  animation:pulse 2.2s infinite;
+}
+@keyframes pulse{
+  70%{box-shadow:0 0 0 7px rgba(74,222,128,0)}
+  100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}
+}
+
+.nav-links{display:flex;align-items:center;gap:4px;margin-left:auto}
+.nav-links a{
+  font-size:.86rem;color:#d4d4d4;
+  padding:9px 14px;border-radius:999px;
+  transition:color .2s,background .2s;white-space:nowrap;
+}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav-links a sup{font-size:.62rem;color:#7d7d7d;margin-left:3px}
+
+.nav-cta{
+  display:inline-flex;align-items:center;gap:7px;
+  background:#fff;color:#151515;font-weight:600;font-size:.86rem;
+  padding:11px 20px;border-radius:999px;
+  transition:background .25s,color .25s;white-space:nowrap;
+}
+.nav-cta:hover{background:var(--accent);color:#fff}
+
+.burger{display:none;margin-left:auto;padding:10px 14px;border-radius:999px;color:#fff}
+
+@media (max-width:900px){
+  .nav-links,.nav .nav-cta{display:none}
+  .burger{display:block}
+  .nav.open{border-radius:26px;flex-wrap:wrap;padding-bottom:14px}
+  .nav.open .nav-links{
+    display:flex;flex-direction:column;align-items:stretch;
+    width:100%;margin:10px 0 0;gap:2px;
+    border-top:1px solid rgba(255,255,255,.1);padding-top:10px;
+  }
+  .nav.open .nav-cta{display:inline-flex;justify-content:center;width:100%;margin-top:8px}
+}
+
+/* ==========================================================================
+   HERO
+   ========================================================================== */
+.hero{position:relative;padding-top:clamp(110px,15vw,170px);overflow:hidden}
+
+.mega{
+  font-family:var(--display);
+  font-weight:700;
+  /* Largeur disponible = viewport − marges de .sheet − padding de .wrap, plafonnée par --max.
+     8.471 = largeur de « OCTAVEADANOU » en Poppins 700, exprimée en em.
+     Le script fit() affine ensuite au pixel près selon la police réellement chargée. */
+  --avail:min(
+    calc(100vw - 2*clamp(8px,1.2vw,18px) - 2*var(--pad)),
+    calc(var(--max) - 2*var(--pad))
+  );
+  font-size:calc(var(--avail) / 8.471);
+  line-height:.86;
+  letter-spacing:-.01em;
+  text-align:center;
+  white-space:nowrap;
+  position:relative;
+  z-index:1;
+}
+.mega .hollow{
+  color:transparent;
+  -webkit-text-stroke:2px var(--ink);
+  paint-order:stroke fill;
+}
+@media (max-width:640px){ .mega .hollow{-webkit-text-stroke-width:1.4px} }
+
+.hero-stage{
+  position:relative;
+  /* Distance dont la tête remonte dans les lettres du nom. Possible seulement
+     parce que la photo est détourée : un rectangle masquerait le nom. */
+  --overlap:clamp(28px,5.2vw,74px);
+  min-height:clamp(320px,40vw,520px);
+  display:flex;align-items:flex-end;
+}
+
+.hero-photo{
+  position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  height:calc(100% + var(--overlap));width:auto;
+  z-index:2;
+  /* La découpe s'arrête net à mi-cuisse : on fond le bas dans la page. */
+  -webkit-mask-image:linear-gradient(to bottom,#000 84%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 84%,transparent 100%);
+}
+.hero-photo img{
+  height:100%;width:auto;
+  object-fit:contain;
+  filter:grayscale(1) contrast(1.06);
+  transform-origin:50% 100%;
+  transition:filter .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);
+}
+/* Couleurs réelles au survol — ou au toucher sur mobile, via la classe .color */
+.hero-photo:hover img,
+.hero-photo.color img{
+  filter:grayscale(0) contrast(1);
+  transform:scale(1.025);
+}
+
+/* Photo introuvable : silhouette discrète à la place */
+.hero-photo.empty{width:clamp(200px,24vw,300px);-webkit-mask-image:none;mask-image:none}
+.hero-photo.empty img{display:none}
+.hero-photo.empty::before{
+  content:"";display:block;height:100%;
+  border:1px dashed var(--line-strong);
+  border-bottom:none;
+  border-radius:22px 22px 0 0;
+  background:
+    radial-gradient(circle at 50% 30%,rgba(21,21,21,.05) 0 22%,transparent 23%),
+    linear-gradient(to bottom,rgba(21,21,21,.035),transparent);
+}
+.hero-photo.empty::after{
+  content:"photo-cutout.webp";
+  position:absolute;left:50%;bottom:26%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;
+  text-transform:uppercase;color:#b6b6b2;white-space:nowrap;
+}
+
+.hero-copy{
+  position:relative;z-index:3;
+  /* S'arrête avant la photo : sinon sa boîte recouvre le bord de la
+     silhouette et bloque le survol à cet endroit. */
+  max-width:min(26rem,calc(50% - clamp(150px,13vw,200px)));
+  padding-bottom:clamp(20px,4vw,40px);
+}
+.hero-copy .mono{display:block;margin-bottom:14px}
+.hero-role{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(1.35rem,2.5vw,1.95rem);
+  line-height:1.08;letter-spacing:-.02em;margin-bottom:14px;
+}
+.hero-copy p{color:var(--muted);margin-bottom:26px;font-size:1rem;max-width:34ch}
+
+.hero-social{
+  position:absolute;right:0;bottom:clamp(20px,4vw,40px);
+  z-index:3;display:flex;flex-direction:column;gap:10px;align-items:flex-end;
+}
+.social{
+  display:inline-flex;align-items:center;gap:9px;
+  background:var(--mist);border:1px solid var(--line);
+  padding:9px 17px;border-radius:999px;
+  font-size:.83rem;font-weight:500;
+  transition:background .22s,color .22s,transform .22s,border-color .22s;
+}
+.social:hover{background:var(--ink);color:#fff;border-color:var(--ink);transform:translateX(-4px)}
+.social svg{width:15px;height:15px;flex:none}
+
+@media (max-width:860px){
+  .hero-stage{display:flex;flex-direction:column;min-height:0;margin-top:8px}
+  .hero-photo{position:relative;left:auto;bottom:auto;transform:none;order:-1;margin:0 auto 12px;height:auto;width:clamp(150px,42vw,230px)}
+  .hero-photo img{height:auto;width:100%}
+  .hero-copy{max-width:none;text-align:center}
+  .hero-copy p{margin-inline:auto}
+  .hero-social{position:relative;right:auto;bottom:auto;flex-direction:row;flex-wrap:wrap;justify-content:center;margin-top:28px}
+  .social:hover{transform:translateY(-3px)}
+}
+
+/* Rotating badge ----------------------------------------------------------- */
+.badge{
+  position:absolute;right:0;top:clamp(18px,4vw,46px);
+  width:clamp(84px,9vw,116px);height:clamp(84px,9vw,116px);
+  z-index:4;pointer-events:none;
+}
+.badge svg{width:100%;height:100%;animation:spin 18s linear infinite}
+.badge text{font-family:var(--mono);font-size:9.2px;letter-spacing:.24em;fill:var(--muted);text-transform:uppercase}
+.badge .core{
+  position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--display);font-weight:700;font-size:1.05rem;color:var(--accent);
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (max-width:860px){.badge{display:none}}
+
+/* ==========================================================================
+   MARQUEE
+   ========================================================================== */
+.marquee{
+  border-block:1px solid var(--line);
+  background:var(--mist);
+  padding:20px 0;overflow:hidden;
+  display:flex;gap:0;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+}
+.marquee ul{
+  display:flex;flex:none;align-items:center;gap:clamp(26px,4vw,54px);
+  padding-right:clamp(26px,4vw,54px);list-style:none;
+  animation:slide 28s linear infinite;
+}
+.marquee li{
+  font-family:var(--mono);font-size:.82rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink);white-space:nowrap;
+  display:flex;align-items:center;gap:clamp(26px,4vw,54px);
+}
+.marquee li::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:.55}
+@keyframes slide{to{transform:translateX(-100%)}}
+.marquee:hover ul{animation-play-state:paused}
+
+/* ==========================================================================
+   PROJECTS
+   ========================================================================== */
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filter{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:9px 17px;border-radius:999px;
+  border:1px solid var(--line-strong);color:var(--muted);
+  transition:all .22s;
+}
+.filter:hover{color:var(--ink);border-color:var(--ink)}
+.filter.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+.grid{display:grid;gap:clamp(16px,2vw,24px);grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+
+.card{
+  background:var(--mist);
+  border-radius:var(--r-lg);
+  padding:10px;
+  box-shadow:var(--shadow-card);
+  transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s;
+  display:flex;flex-direction:column;
+}
+.card:hover{transform:translateY(-8px);box-shadow:0 34px 60px -32px rgb(0 0 0 / .45)}
+
+.thumb{
+  position:relative;border-radius:20px;overflow:hidden;
+  aspect-ratio:16/10;background:#ddd;
+}
+.thumb .shot{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.22,1,.36,1)}
+/* Image d'aperçu large (og:image 1200×630) : affichée entière, les bandes
+   se fondent dans le dégradé de .brandcard--flat placé juste derrière. */
+.thumb .shot--wide{object-fit:contain}
+
+/* Carte de marque affichée tant qu'aucune capture d'écran n'est fournie.
+   Elle est en dessous : la capture la recouvre dès qu'elle existe. */
+.brandcard{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  background:
+    radial-gradient(120% 90% at 50% 0%,rgba(255,255,255,.16),transparent 70%),
+    var(--brand,var(--ink));
+}
+/* Sans voile lumineux : indispensable quand une image posée par-dessus
+   doit se raccorder exactement au fond. */
+.brandcard--flat{background:var(--brand,var(--ink))}
+.brandmark{
+  width:clamp(46px,16%,72px);height:auto;
+  border-radius:16px;
+  filter:drop-shadow(0 10px 22px rgba(0,0,0,.35));
+}
+.brandword{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(1.5rem,4.5vw,2.1rem);letter-spacing:-.02em;
+  color:#fff;
+}
+.branddomain{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;
+  text-transform:lowercase;color:rgba(255,255,255,.82);
+}
+
+/* La capture recouvre la carte de marque ; le zoom au survol ne vise qu'elle */
+.thumb > .shot{position:relative;z-index:1}
+.card:hover .thumb > .shot{transform:scale(1.05)}
+
+/* Ni capture ni marque : motif neutre avec le nom du fichier attendu */
+.thumb.empty{
+  background:
+    linear-gradient(135deg,rgba(21,21,21,.045) 0 25%,transparent 25% 50%,rgba(21,21,21,.045) 50% 75%,transparent 75%)
+    0 0/16px 16px,
+    var(--mist);
+}
+.thumb.empty:not(:has(.brandcard))::after{
+  content:attr(data-label);
+  position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.18em;
+  text-transform:uppercase;color:#a8a8a4;
+}
+
+.flag{
+  position:absolute;top:12px;left:12px;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  background:rgba(255,255,255,.92);color:var(--ink);
+  padding:6px 11px;border-radius:999px;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+.flag.live{background:var(--accent);color:#fff}
+
+.card-body{padding:20px 14px 14px;display:flex;flex-direction:column;flex:1}
+.card-body h3{font-family:var(--display);font-weight:600;font-size:1.18rem;letter-spacing:-.01em;margin-bottom:9px}
+.card-body p{color:var(--muted);font-size:.93rem;margin-bottom:18px;flex:1}
+
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
+.tags span{
+  font-family:var(--mono);font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;
+  background:rgba(21,21,21,.05);color:var(--muted);
+  padding:5px 10px;border-radius:7px;
+}
+
+.card-link{
+  display:inline-flex;align-items:center;gap:7px;
+  font-weight:600;font-size:.9rem;color:var(--ink);
+  padding-top:14px;border-top:1px solid var(--line);
+  transition:color .22s;
+}
+.card-link:hover{color:var(--accent)}
+.card-link .arw{transition:transform .22s}
+.card-link:hover .arw{transform:translate(3px,-3px)}
+.card-link.soon{color:var(--muted);font-weight:500;cursor:default}
+
+.card.hide{display:none}
+
+/* ==========================================================================
+   SERVICES
+   ========================================================================== */
+.services{border-top:1px solid var(--line)}
+.svc{
+  display:grid;grid-template-columns:auto 1fr minmax(0,32ch);
+  gap:clamp(16px,4vw,48px);align-items:start;
+  padding:clamp(26px,3.4vw,40px) 0;
+  border-bottom:1px solid var(--line);
+  transition:padding-left .35s cubic-bezier(.22,1,.36,1);
+}
+.svc:hover{padding-left:clamp(6px,1.4vw,18px)}
+.svc .num{font-family:var(--mono);font-size:.74rem;color:var(--accent);padding-top:.5em}
+.svc h3{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(1.25rem,3.2vw,2.05rem);
+  letter-spacing:-.015em;text-transform:uppercase;line-height:1.06;
+}
+.svc p{color:var(--muted);font-size:.95rem}
+@media (max-width:760px){
+  .svc{grid-template-columns:auto 1fr}
+  .svc p{grid-column:2}
+}
+
+/* ==========================================================================
+   EXPERIENCE
+   ========================================================================== */
+.xp{border-top:1px solid var(--line)}
+.xp-row{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;
+  gap:clamp(12px,3vw,40px);align-items:baseline;
+  padding:clamp(22px,2.8vw,32px) 0;
+  border-bottom:1px solid var(--line);
+  transition:background .3s,padding-left .35s cubic-bezier(.22,1,.36,1);
+}
+.xp-row:hover{padding-left:clamp(6px,1.4vw,18px)}
+.xp-row h3{font-family:var(--display);font-weight:600;font-size:clamp(1.02rem,2.1vw,1.32rem);letter-spacing:-.01em}
+.xp-row .co{color:var(--muted);font-size:.95rem}
+.xp-row .when{font-family:var(--mono);font-size:.71rem;letter-spacing:.1em;color:var(--muted);white-space:nowrap}
+@media (max-width:760px){
+  .xp-row{grid-template-columns:1fr;gap:5px}
+  .xp-row .when{order:-1}
+}
+
+/* Stats -------------------------------------------------------------------- */
+.stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:clamp(20px,3vw,40px);
+  margin-top:clamp(44px,6vw,72px);
+}
+.stat{border-top:2px solid var(--ink);padding-top:18px}
+.stat .n{font-family:var(--display);font-weight:700;font-size:clamp(2rem,4.4vw,2.9rem);line-height:1;letter-spacing:-.03em}
+.stat .n em{font-style:normal;color:var(--accent)}
+.stat .l{color:var(--muted);font-size:.9rem;margin-top:7px}
+
+/* ==========================================================================
+   CONTACT + FOOTER
+   ========================================================================== */
+.contact{background:var(--ink);color:#f5f5f5;border-radius:clamp(16px,2.4vw,34px)}
+.contact .wrap{padding-block:clamp(72px,10vw,130px)}
+.contact .status{
+  display:inline-flex;padding:8px 16px 8px 14px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);margin-bottom:28px;
+}
+.contact h2{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(2.1rem,7vw,4.6rem);line-height:1;letter-spacing:-.03em;
+  margin-bottom:22px;max-width:16ch;
+}
+.contact h2 i{font-style:normal;color:var(--accent)}
+.contact p{color:#a3a3a3;max-width:48ch;margin-bottom:38px;font-size:1.04rem}
+.contact-btns{display:flex;gap:12px;flex-wrap:wrap}
+.contact .btn{background:#fff;color:var(--ink);box-shadow:none}
+.contact .btn:hover{background:var(--accent);color:#fff}
+.contact .btn-ghost{background:transparent;color:#f5f5f5;border-color:rgba(255,255,255,.22)}
+.contact .btn-ghost:hover{background:#fff;color:var(--ink);border-color:#fff}
+
+.foot{
+  border-top:1px solid rgba(255,255,255,.1);
+  margin-top:clamp(56px,8vw,90px);padding-top:30px;
+  display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+}
+.foot .name{font-family:var(--display);font-weight:700;font-size:1.05rem}
+.foot .mono{color:#7a7a7a}
+.foot-links{display:flex;gap:18px;flex-wrap:wrap}
+.foot-links a{font-size:.88rem;color:#a3a3a3;transition:color .2s}
+.foot-links a:hover{color:#fff}
+
+/* ==========================================================================
+   REVEAL
+   ========================================================================== */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1)}
+.rv.in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== LOADER ===================== -->
+<div id="loader"><span>Octave Adanou</span><span class="count" id="pct">0</span></div>
+
+<!-- ===================== NAV ===================== -->
+<nav class="nav" id="nav">
+  <span class="status"><span class="dot"></span> Disponible pour de nouveaux projets</span>
+  <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+  <div class="nav-links" id="navLinks">
+    <a href="#projets">Projets<sup>[4]</sup></a>
+    <a href="#services">Services<sup>[4]</sup></a>
+    <a href="#parcours">Parcours<sup>[5+]</sup></a>
+    <a href="#contact">Contact</a>
+    <a class="nav-cta" href="#contact">Parlons-en <span aria-hidden="true">↗</span></a>
+  </div>
+</nav>
+
+<div class="sheet">
+
+  <!-- ===================== HERO ===================== -->
+  <header class="hero" id="top">
+    <div class="wrap">
+      <h1 class="mega"><span class="hollow">OCTAVE</span><span>ADANOU</span></h1>
+
+      <div class="hero-stage">
+        <div class="badge">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <defs><path id="circle" d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0"/></defs>
+            <text><textPath href="#circle">DÉVELOPPEUR FULL-STACK • FREELANCE • </textPath></text>
+          </svg>
+          <span class="core">OA</span>
+        </div>
+
+        <div class="hero-photo">
+          <img src="photo-cutout.webp" alt="Portrait d'Octave Adanou" id="portrait" width="700" height="1352"
+               onerror="this.closest('.hero-photo').classList.add('empty')">
+        </div>
+
+        <div class="hero-copy">
+          <span class="mono">A.K.A. OCTAVE DEV</span>
+          <p class="hero-role">Développeur Web Full-Stack</p>
+          <p>Je transforme vos idées en produits web rapides, élégants et sur-mesure — du back-end à l'interface.</p>
+          <a class="btn" href="#contact">Collaborons <span class="arw" aria-hidden="true">↗</span></a>
+        </div>
+
+        <div class="hero-social">
+          <a class="social" href="https://github.com/Octavio-9" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0C17.3 4.7 18.3 5 18.3 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3z"/></svg>
+            GitHub
+          </a>
+          <a class="social" href="mailto:octaveadanou9@gmail.com">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 5a2 2 0 012-2h16a2 2 0 012 2v14a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm2.4.9L12 11.6l7.6-5.7H4.4zM20 8.1l-7.4 5.6a1 1 0 01-1.2 0L4 8.1V19h16V8.1z"/></svg>
+            Email
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== MARQUEE ===================== -->
+  <div class="marquee" aria-hidden="true">
+    <ul>
+      <li>JavaScript</li><li>React</li><li>Node.js</li><li>TypeScript</li>
+      <li>Next.js</li><li>PHP / Laravel</li><li>SQL</li><li>Tailwind CSS</li><li>Git</li>
+    </ul>
+    <ul>
+      <li>JavaScript</li><li>React</li><li>Node.js</li><li>TypeScript</li>
+      <li>Next.js</li><li>PHP / Laravel</li><li>SQL</li><li>Tailwind CSS</li><li>Git</li>
+    </ul>
+  </div>
+
+  <!-- ===================== PROJETS ===================== -->
+  <section class="section" id="projets">
+    <div class="wrap">
+      <div class="section-head rv">
+        <div>
+          <span class="mono">Portfolio</span>
+          <h2 class="section-title">/Projets <i>choisis</i></h2>
+        </div>
+        <div class="filters" id="filters">
+          <button class="filter active" data-f="all">Tous</button>
+          <button class="filter" data-f="live">En ligne</button>
+          <button class="filter" data-f="wip">En cours</button>
+        </div>
+      </div>
+
+      <div class="grid" id="grid">
+
+        <!-- ▼ Remplacez le contenu de chaque carte par vos vrais projets ▼ -->
+        <article class="card rv" data-k="live">
+          <div class="thumb" data-label="apercus/dailykash.png" style="--brand:linear-gradient(135deg,#0f766e 0%,#1c9a77 55%,#10a871 100%)">
+            <span class="flag live">En ligne</span>
+            <div class="brandcard brandcard--flat"><span class="branddomain">dailykash.app</span></div>
+            <img class="shot shot--wide" src="apercus/dailykash.png" alt="Aperçu de Daily Kash" loading="lazy"
+                 onerror="this.closest('.thumb').classList.add('empty');this.remove()">
+          </div>
+          <div class="card-body">
+            <h3>Daily Kash</h3>
+            <p>Le bureau financier des freelances d'Afrique de l'Ouest : suivi des revenus, des dépenses et des clients, facturation et tableau de bord — pour arrêter de découvrir son chiffre d'affaires en fin de mois.</p>
+            <div class="tags"><span>SaaS</span><span>Multi-devises</span><span>Facturation PDF</span><span>Mobile Money</span></div>
+            <a class="card-link" href="https://dailykash.app" target="_blank" rel="noopener">dailykash.app <span class="arw" aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card rv" data-k="live">
+          <div class="thumb" data-label="apercus/dailyplan.jpg" style="--brand:#e8002d">
+            <span class="flag live">En ligne</span>
+            <div class="brandcard">
+              <img class="brandmark" src="apercus/logo-dailyplan.png" alt="" aria-hidden="true">
+              <span class="branddomain">dailyplangn.com</span>
+            </div>
+            <img class="shot" src="apercus/dailyplan.jpg" alt="Aperçu de DailyPlan" loading="lazy"
+                 onerror="this.closest('.thumb').classList.add('empty');this.remove()">
+          </div>
+          <div class="card-body">
+            <h3>DailyPlan</h3>
+            <p>Une plateforme pour découvrir des activités à Conakry, réserver sa place et rencontrer des gens pour les faire ensemble — sport, sorties, ateliers. Réservation et paiement en quelques secondes.</p>
+            <div class="tags"><span>Marketplace</span><span>Réservation</span><span>Mobile Money</span><span>Géolocalisé</span></div>
+            <a class="card-link" href="https://dailyplangn.com" target="_blank" rel="noopener">dailyplangn.com <span class="arw" aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card rv" data-k="live">
+          <div class="thumb" data-label="apercus/dkmanager.jpg" style="--brand:#0f0e13">
+            <span class="flag live">En ligne</span>
+            <div class="brandcard">
+              <img class="brandmark" src="apercus/logo-dkmanager.png" alt="" aria-hidden="true">
+              <span class="branddomain">dkmanager.netlify.app</span>
+            </div>
+            <img class="shot" src="apercus/dkmanager.jpg" alt="Aperçu de DK Production Manager" loading="lazy"
+                 onerror="this.closest('.thumb').classList.add('empty');this.remove()">
+          </div>
+          <div class="card-body">
+            <h3>DK Production Manager</h3>
+            <p>Un espace de gestion pour les studios de production vidéo et photo : clients, projets, factures et planning réunis dans une seule interface, avec connexion Google.</p>
+            <div class="tags"><span>Dashboard</span><span>Auth Google</span><span>Planning</span><span>Netlify</span></div>
+            <a class="card-link" href="https://dkmanager.netlify.app" target="_blank" rel="noopener">dkmanager.netlify.app <span class="arw" aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card rv" data-k="wip">
+          <div class="thumb" data-label="apercus/wedika.jpg" style="--brand:#151515">
+            <span class="flag">En cours</span>
+            <div class="brandcard">
+              <span class="brandword">Wedika</span>
+              <span class="branddomain">wedika.app</span>
+            </div>
+            <img class="shot" src="apercus/wedika.jpg" alt="Aperçu de Wedika" loading="lazy"
+                 onerror="this.closest('.thumb').classList.add('empty');this.remove()">
+          </div>
+          <div class="card-body">
+            <h3>Wedika</h3>
+            <!-- ▼ À compléter : décrivez ce que fait Wedika et pour qui ▼ -->
+            <p>Projet en cours de développement. Présentation détaillée bientôt disponible.</p>
+            <div class="tags"><span>En développement</span></div>
+            <span class="card-link soon">Bientôt en ligne</span>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SERVICES ===================== -->
+  <section class="section" id="services">
+    <div class="wrap">
+      <div class="section-head rv">
+        <div>
+          <span class="mono">Ce que je fais</span>
+          <h2 class="section-title">/Services</h2>
+        </div>
+        <p class="lede">Quatre façons de travailler ensemble, du premier prototype à la mise en production.</p>
+      </div>
+
+      <div class="services">
+        <div class="svc rv">
+          <span class="num">01</span>
+          <h3>Développement web</h3>
+          <p>Sites et applications sur mesure avec React et Next.js : rapides, accessibles et faciles à faire évoluer.</p>
+        </div>
+        <div class="svc rv">
+          <span class="num">02</span>
+          <h3>API &amp; back-end</h3>
+          <p>Architectures Node.js ou Laravel, bases SQL bien modélisées, authentification et intégrations tierces.</p>
+        </div>
+        <div class="svc rv">
+          <span class="num">03</span>
+          <h3>Intégration &amp; UI</h3>
+          <p>Vos maquettes transformées en interfaces pixel-perfect, responsives et animées avec justesse.</p>
+        </div>
+        <div class="svc rv">
+          <span class="num">04</span>
+          <h3>Maintenance &amp; performance</h3>
+          <p>Audit, correction de bugs, optimisation du temps de chargement et du référencement de l'existant.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PARCOURS ===================== -->
+  <section class="section" id="parcours">
+    <div class="wrap">
+      <div class="section-head rv">
+        <div>
+          <span class="mono">Expérience</span>
+          <h2 class="section-title">/Parcours</h2>
+        </div>
+        <p class="lede">5 ans à concevoir, coder et livrer des produits web pour des clients et des équipes.</p>
+      </div>
+
+      <div class="xp">
+        <!-- ▼ Remplacez par vos vraies expériences ▼ -->
+        <div class="xp-row rv">
+          <h3>Développeur Full-Stack</h3>
+          <span class="co">Freelance</span>
+          <span class="when">2023 — Aujourd'hui</span>
+        </div>
+        <div class="xp-row rv">
+          <h3>Développeur Front-end</h3>
+          <span class="co">Nom de l'entreprise</span>
+          <span class="when">2022 — 2023</span>
+        </div>
+        <div class="xp-row rv">
+          <h3>Développeur Back-end</h3>
+          <span class="co">Nom de l'entreprise</span>
+          <span class="when">2021 — 2022</span>
+        </div>
+        <div class="xp-row rv">
+          <h3>Intégrateur web</h3>
+          <span class="co">Nom de l'entreprise</span>
+          <span class="when">2020 — 2021</span>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat rv"><div class="n"><em>30+</em></div><div class="l">projets livrés pour mes clients</div></div>
+        <div class="stat rv"><div class="n"><em>5</em> ans</div><div class="l">d'expérience en développement</div></div>
+        <div class="stat rv"><div class="n"><em>100</em>%</div><div class="l">de clients satisfaits</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CONTACT ===================== -->
+  <section class="contact" id="contact">
+    <div class="wrap">
+      <span class="status rv"><span class="dot"></span> Disponible pour de nouveaux projets</span>
+      <h2 class="rv">Un projet en <i>tête</i> ?</h2>
+      <p class="rv">Ensemble, on peut créer quelque chose de clair et d'impactant. Écrivez-moi : on en parle autour d'un café (virtuel).</p>
+      <div class="contact-btns rv">
+        <a class="btn" href="mailto:octaveadanou9@gmail.com">Me contacter <span class="arw" aria-hidden="true">↗</span></a>
+        <a class="btn btn-ghost" href="https://github.com/Octavio-9" target="_blank" rel="noopener">Mon GitHub</a>
+      </div>
+
+      <footer class="foot">
+        <div>
+          <div class="name">Octave Adanou</div>
+          <div class="mono" style="margin-top:6px">© 2026 — Développeur Web</div>
+        </div>
+        <div class="foot-links">
+          <a href="https://github.com/Octavio-9" target="_blank" rel="noopener">GitHub</a>
+          <a href="mailto:octaveadanou9@gmail.com">Email</a>
+          <a href="#top">Retour en haut ↑</a>
+        </div>
+      </footer>
+    </div>
+  </section>
+
+</div><!-- /.sheet -->
+
+<script>
+/* ---------- Loader ---------- */
+(function(){
+  var el = document.getElementById('loader'), pct = document.getElementById('pct'), n = 0;
+  var t = setInterval(function(){
+    n = Math.min(100, n + Math.ceil(Math.random() * 9));
+    pct.textContent = n;
+    if (n >= 100) { clearInterval(t); setTimeout(function(){ el.classList.add('done'); }, 260); }
+  }, 55);
+  setTimeout(function(){ clearInterval(t); el.classList.add('done'); }, 3000);
+})();
+
+/* ---------- Le nom géant remplit exactement la largeur ---------- */
+(function(){
+  var mega = document.querySelector('.mega');
+  if (!mega) return;
+  var box = mega.parentElement;
+
+  // largeur réelle du texte (et non du bloc, qui occupe toute la ligne)
+  function textWidth(){
+    var r = document.createRange();
+    r.selectNodeContents(mega);
+    return r.getBoundingClientRect().width;
+  }
+
+  function fit(){
+    var cs = getComputedStyle(box);
+    var avail = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    // conteneur pas encore mesurable : on garde la taille CSS de repli (11.4vw)
+    if (avail <= 0) return;
+
+    var size = parseFloat(getComputedStyle(mega).fontSize) || 100;
+    // deux passes : la seconde corrige toute mesure prise en cours de transition
+    for (var i = 0; i < 2; i++) {
+      var w = textWidth();
+      if (!w) return;
+      size = Math.min(size * avail / w, 240);
+      mega.style.fontSize = size + 'px';
+    }
+  }
+
+  function fitSoon(){ fit(); requestAnimationFrame(fit); }
+
+  fitSoon();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitSoon);
+  window.addEventListener('load', fitSoon);
+  // suit la largeur réelle du conteneur (rotation, redimensionnement, zoom)
+  if ('ResizeObserver' in window) new ResizeObserver(fitSoon).observe(box);
+  else window.addEventListener('resize', fitSoon);
+})();
+
+/* ---------- Photo : couleurs au toucher (pas de survol sur écran tactile) ---------- */
+(function(){
+  var ph = document.querySelector('.hero-photo');
+  if (!ph || !window.matchMedia || !matchMedia('(hover: none)').matches) return;
+  ph.addEventListener('click', function(){ ph.classList.toggle('color'); });
+})();
+
+/* ---------- Menu mobile ---------- */
+(function(){
+  var nav = document.getElementById('nav'), burger = document.getElementById('burger');
+  burger.addEventListener('click', function(){
+    var open = nav.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open);
+    burger.textContent = open ? '✕' : '☰';
+  });
+  document.getElementById('navLinks').addEventListener('click', function(e){
+    if (e.target.closest('a')) { nav.classList.remove('open'); burger.textContent = '☰'; burger.setAttribute('aria-expanded', false); }
+  });
+})();
+
+/* ---------- Filtres projets ---------- */
+(function(){
+  var map = { all:null, live:'live', wip:'wip' };
+  document.getElementById('filters').addEventListener('click', function(e){
+    var b = e.target.closest('.filter'); if (!b) return;
+    this.querySelectorAll('.filter').forEach(function(x){ x.classList.remove('active'); });
+    b.classList.add('active');
+    var want = map[b.dataset.f];
+    document.querySelectorAll('#grid .card').forEach(function(c){
+      c.classList.toggle('hide', !!want && c.dataset.k !== want);
+    });
+  });
+})();
+
+/* ---------- Apparition au scroll ---------- */
+(function(){
+  var items = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) { items.forEach(function(i){ i.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en, i){
+      if (en.isIntersecting) {
+        setTimeout(function(){ en.target.classList.add('in'); }, i * 70);
+        io.unobserve(en.target);
+      }
+    });
+  }, { threshold:.12, rootMargin:'0px 0px -8% 0px' });
+  items.forEach(function(i){ io.observe(i); });
+})();
+</script>
+
+</body>
+</html>
