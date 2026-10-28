@@ -855,6 +855,25 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
           </div>
         </article>
 
+        <!-- 10. FotoBox -->
+        <article class="card rv" data-k="live">
+          <div class="thumb" data-label="apercus/fotobox.jpg" style="--brand:linear-gradient(135deg,#1a1208 0%,#2d1f0a 50%,#0d0900 100%)">
+            <span class="flag live" data-i18n="flag_live">Live</span>
+            <div class="brandcard">
+              <span class="brandword" style="font-size:1.15rem;letter-spacing:.04em">FotoBox</span>
+              <span class="branddomain">fotobox.app</span>
+            </div>
+            <img class="shot" src="apercus/fotobox.jpg" alt="Preview of FotoBox" loading="lazy"
+                 onerror="this.closest('.thumb').classList.add('empty');this.remove()">
+          </div>
+          <div class="card-body">
+            <h3>FotoBox</h3>
+            <p data-i18n="p_fb_desc">Interactive photo booth web application for events: instant digital photos with custom filters, frames, and overlays — shareable in seconds via QR code or direct download.</p>
+            <div class="tags"><span data-i18n="p_fb_tag1">Photo Booth</span><span data-i18n="p_fb_tag2">Events</span><span data-i18n="p_fb_tag3">QR Code</span><span data-i18n="p_fb_tag4">Real-time</span></div>
+            <a class="card-link" href="#" target="_blank" rel="noopener" data-i18n-html="p_fb_link">fotobox.app <span class="arw" aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
       </div>
     </div>
   </section>
@@ -1011,8 +1030,8 @@ var I18N = {
     p_br_desc: "Industrial showcase dedicated to heavy-duty rubber conveyor belts for the mining industry, quarries, cement plants, and power generation.",
     p_br_tag1: "Conveyor Belts", p_br_tag2: "Mining Systems", p_br_tag3: "Heavy Industry", p_br_tag4: "Global Export",
     
-    p_dp_desc: "A platform to discover activities in Conakry, book tickets, and meet people to enjoy them together — sports, outings, workshops. Booking and instant mobile payment.",
-    p_dp_tag1: "Marketplace", p_dp_tag2: "Booking", p_dp_tag3: "Mobile Money", p_dp_tag4: "Geo-located",
+    p_dp_desc: "A platform to discover activities in Conakry, book tickets, and meet people to enjoy them together — sports, outings, workshops. Also available as a mobile app on the Play Store and coming soon on the App Store.",
+    p_dp_tag1: "Marketplace", p_dp_tag2: "Mobile App", p_dp_tag3: "Play Store", p_dp_tag4: "Geo-located",
     
     p_dkm_desc: "All-in-one management workspace for photo and video production studios: clients, projects, invoices, and scheduling united in a single dashboard with Google Auth.",
     p_dkm_tag1: "Dashboard", p_dkm_tag2: "Google Auth", p_dkm_tag3: "Scheduling", p_dkm_tag4: "Netlify",
@@ -1055,7 +1074,11 @@ var I18N = {
     contact_btn: "Get in touch <span class=\"arw\" aria-hidden=\"true\">↗</span>",
     contact_github: "My GitHub",
     foot_role: "© 2026 — Web Developer",
-    foot_top: "Back to top ↑"
+    foot_top: "Back to top ↑",
+    
+    p_fb_desc: "Interactive photo booth web application for events: instant digital photos with custom filters, frames, and overlays — shareable in seconds via QR code or direct download.",
+    p_fb_tag1: "Photo Booth", p_fb_tag2: "Events", p_fb_tag3: "QR Code", p_fb_tag4: "Real-time",
+    p_fb_link: "fotobox.app <span class=\"arw\" aria-hidden=\"true\">↗</span>"
   },
   fr: {
     meta_title: "Octave Adanou — Développeur Web Full-Stack",
@@ -1099,8 +1122,8 @@ var I18N = {
     p_br_desc: "Vitrine industrielle dédiée aux bandes transporteuses en caoutchouc pour l'industrie minière, les carrières, les cimenteries et l'énergie.",
     p_br_tag1: "Bandes transporteuses", p_br_tag2: "Convoyeurs miniers", p_br_tag3: "Industrie", p_br_tag4: "Export",
     
-    p_dp_desc: "Une plateforme pour découvrir des activités à Conakry, réserver sa place et rencontrer des gens pour les faire ensemble — sport, sorties, ateliers. Réservation et paiement en quelques secondes.",
-    p_dp_tag1: "Marketplace", p_dp_tag2: "Réservation", p_dp_tag3: "Mobile Money", p_dp_tag4: "Géolocalisé",
+    p_dp_desc: "Une plateforme pour découvrir des activités à Conakry, réserver sa place et rencontrer des gens pour les faire ensemble — sport, sorties, ateliers. Aussi disponible en application mobile sur le Play Store et bientôt sur l'App Store.",
+    p_dp_tag1: "Marketplace", p_dp_tag2: "Appli Mobile", p_dp_tag3: "Play Store", p_dp_tag4: "Géolocalisé",
     
     p_dkm_desc: "Un espace de gestion pour les studios de production vidéo et photo : clients, projets, factures et planning réunis dans une seule interface, avec connexion Google.",
     p_dkm_tag1: "Dashboard", p_dkm_tag2: "Auth Google", p_dkm_tag3: "Planning", p_dkm_tag4: "Netlify",
@@ -1143,7 +1166,11 @@ var I18N = {
     contact_btn: "Me contacter <span class=\"arw\" aria-hidden=\"true\">↗</span>",
     contact_github: "Mon GitHub",
     foot_role: "© 2026 — Développeur Web",
-    foot_top: "Retour en haut ↑"
+    foot_top: "Retour en haut ↑",
+    
+    p_fb_desc: "Application web de photo booth interactive pour vos événements : photos numériques instantanées avec filtres, cadres et overlays personnalisés — partageables en quelques secondes par QR code ou téléchargement direct.",
+    p_fb_tag1: "Photo Booth", p_fb_tag2: "Événements", p_fb_tag3: "QR Code", p_fb_tag4: "Temps réel",
+    p_fb_link: "fotobox.app <span class=\"arw\" aria-hidden=\"true\">↗</span>"
   }
 };
 
