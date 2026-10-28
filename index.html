@@ -443,6 +443,35 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .thumb > .shot{position:relative;z-index:1}
 .card:hover .thumb > .shot{transform:scale(1.05)}
 
+/* -- Carousel inside thumb -- */
+.thumb-carousel{
+  position:absolute;inset:0;z-index:1;
+  display:flex;overflow:hidden;
+}
+.thumb-carousel .slide{
+  min-width:100%;height:100%;
+  flex-shrink:0;
+  transition:transform .7s cubic-bezier(.22,1,.36,1);
+}
+.thumb-carousel .slide img{
+  width:100%;height:100%;object-fit:cover;
+  display:block;
+}
+.thumb-carousel-dots{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  display:flex;gap:5px;z-index:3;
+}
+.thumb-carousel-dots span{
+  width:5px;height:5px;border-radius:50%;
+  background:rgba(255,255,255,.5);
+  transition:background .3s,transform .3s;
+  cursor:pointer;
+}
+.thumb-carousel-dots span.active{
+  background:#fff;
+  transform:scale(1.4);
+}
+
 .thumb.empty{
   background:
     linear-gradient(135deg,rgba(21,21,21,.045) 0 25%,transparent 25% 50%,rgba(21,21,21,.045) 50% 75%,transparent 75%)
@@ -608,7 +637,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
   <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">☰</button>
   <div class="nav-links" id="navLinks">
-    <a href="#projets"><span data-i18n="nav_projets">Projects</span><sup>[9]</sup></a>
+    <a href="#projets"><span data-i18n="nav_projets">Projects</span><sup>[10]</sup></a>
     <a href="#services"><span data-i18n="nav_services">Services</span><sup>[4]</sup></a>
     <a href="#parcours"><span data-i18n="nav_expertise">Expertise</span><sup>[4]</sup></a>
     <a href="#contact" data-i18n="nav_contact">Contact</a>
@@ -800,13 +829,13 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
         <!-- 7. DailyPlan -->
         <article class="card rv" data-k="live">
-          <div class="thumb" data-label="apercus/dailyplan.jpg" style="--brand:#e8002d">
+          <div class="thumb" data-label="apercus/dailyplan.png" style="--brand:#e8002d">
             <span class="flag live" data-i18n="flag_live">Live</span>
             <div class="brandcard">
               <img class="brandmark" src="apercus/logo-dailyplan.png" alt="" aria-hidden="true">
               <span class="branddomain">dailyplangn.com</span>
             </div>
-            <img class="shot" src="apercus/dailyplan.jpg" alt="Preview of DailyPlan" loading="lazy"
+            <img class="shot" src="apercus/dailyplan.png?v=2" alt="Preview of DailyPlan" loading="lazy"
                  onerror="this.closest('.thumb').classList.add('empty');this.remove()">
           </div>
           <div class="card-body">
@@ -819,13 +848,13 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
         <!-- 8. DK Production Manager -->
         <article class="card rv" data-k="live">
-          <div class="thumb" data-label="apercus/dkmanager.jpg" style="--brand:#0f0e13">
+          <div class="thumb" data-label="apercus/dkmanager.png" style="--brand:#0f0e13">
             <span class="flag live" data-i18n="flag_live">Live</span>
             <div class="brandcard">
               <img class="brandmark" src="apercus/logo-dkmanager.png" alt="" aria-hidden="true">
               <span class="branddomain">dkmanager.netlify.app</span>
             </div>
-            <img class="shot" src="apercus/dkmanager.jpg" alt="Preview of DK Production Manager" loading="lazy"
+            <img class="shot" src="apercus/dkmanager.png?v=2" alt="Preview of DK Production Manager" loading="lazy"
                  onerror="this.closest('.thumb').classList.add('empty');this.remove()">
           </div>
           <div class="card-body">
@@ -838,39 +867,61 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
         <!-- 9. Wedika -->
         <article class="card rv" data-k="wip">
-          <div class="thumb" data-label="apercus/wedika.jpg" style="--brand:#151515">
+          <div class="thumb" id="wedikaThumb" style="--brand:linear-gradient(135deg,#064e3b 0%,#093d2e 60%,#022c1f 100%)">
             <span class="flag" data-i18n="flag_wip">In progress</span>
             <div class="brandcard">
-              <span class="brandword">Wedika</span>
+              <span class="brandword" style="font-size:1.15rem;letter-spacing:.04em">Wédika</span>
               <span class="branddomain">wedika.app</span>
             </div>
-            <img class="shot" src="apercus/wedika.jpg" alt="Preview of Wedika" loading="lazy"
-                 onerror="this.closest('.thumb').classList.add('empty');this.remove()">
+            <!-- Auto-scrolling carousel -->
+            <div class="thumb-carousel" id="wedikaCarousel">
+              <div class="slide"><img src="apercus/wedika-landing.jpg" alt="Wédika — Page d'accueil" loading="lazy" onerror="this.closest('.thumb').classList.add('empty');this.remove()"></div>
+              <div class="slide"><img src="apercus/wedika-envelope.jpg" alt="Wédika — Faire-part enveloppe interactive" loading="lazy" onerror="this.closest('.thumb').classList.add('empty');this.remove()"></div>
+              <div class="slide"><img src="apercus/wedika-invitation.jpg" alt="Wédika — Invitation de mariage" loading="lazy" onerror="this.closest('.thumb').classList.add('empty');this.remove()"></div>
+              <div class="slide"><img src="apercus/wedika-login.jpg" alt="Wédika — Espace mariés" loading="lazy" onerror="this.closest('.thumb').classList.add('empty');this.remove()"></div>
+            </div>
+            <div class="thumb-carousel-dots" id="wedikaDots">
+              <span class="active" data-idx="0"></span>
+              <span data-idx="1"></span>
+              <span data-idx="2"></span>
+              <span data-idx="3"></span>
+            </div>
           </div>
           <div class="card-body">
-            <h3>Wedika</h3>
-            <p data-i18n="p_wedika_desc">Project currently in development. Detailed presentation coming soon.</p>
-            <div class="tags"><span data-i18n="p_wedika_tag1">In development</span></div>
+            <h3>Wédika</h3>
+            <p data-i18n="p_wedika_desc">Digital wedding invitations platform: create and share elegant African-inspired wedding invitations with interactive digital envelopes, guest RSVP tracking, and background music. <em style="color:var(--accent);font-style:normal;font-size:.85em">Currently in development.</em></p>
+            <div class="tags"><span data-i18n="p_wedika_tag1">SaaS</span><span data-i18n="p_wedika_tag2">Wedding Invitations</span><span data-i18n="p_wedika_tag3">RSVP</span><span data-i18n="p_wedika_tag4">Mobile-first</span><span data-i18n="p_wedika_tag5">In development</span></div>
             <span class="card-link soon" data-i18n="link_soon">Coming soon</span>
           </div>
         </article>
 
         <!-- 10. FotoBox -->
-        <article class="card rv" data-k="live">
-          <div class="thumb" data-label="apercus/fotobox.jpg" style="--brand:linear-gradient(135deg,#0d0d0d 0%,#1a1a1a 60%,#2a2a2a 100%)">
-            <span class="flag live" data-i18n="flag_live">Live</span>
+        <article class="card rv" data-k="wip">
+          <div class="thumb" id="fbThumb" style="--brand:linear-gradient(135deg,#0d0d0d 0%,#1a1a1a 60%,#2a2a2a 100%)">
+            <span class="flag" data-i18n="flag_wip">In progress</span>
             <div class="brandcard">
               <span class="brandword" style="font-size:1.15rem;letter-spacing:.04em">Fotobox</span>
               <span class="branddomain">fotobox.vercel.app</span>
             </div>
-            <img class="shot" src="apercus/fotobox.jpg" alt="Preview of Fotobox" loading="lazy"
-                 onerror="this.closest('.thumb').classList.add('empty');this.remove()">
+            <!-- Auto-scrolling carousel -->
+            <div class="thumb-carousel" id="fbCarousel">
+              <div class="slide"><img src="apercus/fotobox-dashboard.png" alt="Fotobox — Tableau de bord" loading="lazy" onerror="this.closest('.thumb').classList.add('empty');this.remove()"></div>
+              <div class="slide"><img src="apercus/fotobox-albums.png" alt="Fotobox — Albums" loading="lazy" onerror="this.closest('.thumb').classList.add('empty');this.remove()"></div>
+              <div class="slide"><img src="apercus/fotobox-client.png" alt="Fotobox — Vue sélection client" loading="lazy" onerror="this.closest('.thumb').classList.add('empty');this.remove()"></div>
+              <div class="slide"><img src="apercus/fotobox-landing.png" alt="Fotobox — Page d'accueil" loading="lazy" onerror="this.closest('.thumb').classList.add('empty');this.remove()"></div>
+            </div>
+            <div class="thumb-carousel-dots" id="fbDots">
+              <span class="active" data-idx="0"></span>
+              <span data-idx="1"></span>
+              <span data-idx="2"></span>
+              <span data-idx="3"></span>
+            </div>
           </div>
           <div class="card-body">
             <h3>Fotobox</h3>
-            <p data-i18n="p_fb_desc">SaaS platform for photographers: upload event and wedding photos, share a selection link with clients, and let them pick their favourites — with studio branding and WhatsApp contact built in.</p>
-            <div class="tags"><span data-i18n="p_fb_tag1">SaaS</span><span data-i18n="p_fb_tag2">Photography</span><span data-i18n="p_fb_tag3">Client Portal</span><span data-i18n="p_fb_tag4">Events</span></div>
-            <a class="card-link" href="#" target="_blank" rel="noopener" data-i18n-html="p_fb_link">fotobox.vercel.app <span class="arw" aria-hidden="true">↗</span></a>
+            <p data-i18n="p_fb_desc">SaaS platform for photographers: upload event and wedding photos, share a selection link with clients, and let them pick their favourites — with studio branding and WhatsApp contact built in. <em style="color:var(--accent);font-style:normal;font-size:.85em">Currently in development.</em></p>
+            <div class="tags"><span data-i18n="p_fb_tag1">SaaS</span><span data-i18n="p_fb_tag2">Photography</span><span data-i18n="p_fb_tag3">Client Portal</span><span data-i18n="p_fb_tag4">Events</span><span data-i18n="p_fb_tag5">In development</span></div>
+            <span class="card-link soon" data-i18n="link_soon">Coming soon</span>
           </div>
         </article>
 
@@ -1036,8 +1087,8 @@ var I18N = {
     p_dkm_desc: "All-in-one management workspace for photo and video production studios: clients, projects, invoices, and scheduling united in a single dashboard with Google Auth.",
     p_dkm_tag1: "Dashboard", p_dkm_tag2: "Google Auth", p_dkm_tag3: "Scheduling", p_dkm_tag4: "Netlify",
     
-    p_wedika_desc: "Project currently in development. Detailed presentation coming soon.",
-    p_wedika_tag1: "In development",
+    p_wedika_desc: "Digital wedding invitations platform: create and share elegant African-inspired wedding invitations with interactive digital envelopes, guest RSVP tracking, and background music. Currently in development.",
+    p_wedika_tag1: "SaaS", p_wedika_tag2: "Wedding Invitations", p_wedika_tag3: "RSVP", p_wedika_tag4: "Mobile-first", p_wedika_tag5: "In development",
     
     sec_services_mono: "What I do",
     sec_services_title: "/Services",
@@ -1076,8 +1127,8 @@ var I18N = {
     foot_role: "© 2026 — Web Developer",
     foot_top: "Back to top ↑",
     
-    p_fb_desc: "SaaS platform for photographers: upload event and wedding photos, share a selection link with clients, and let them pick their favourites — with studio branding and WhatsApp contact built in.",
-    p_fb_tag1: "SaaS", p_fb_tag2: "Photography", p_fb_tag3: "Client Portal", p_fb_tag4: "Events",
+    p_fb_desc: "SaaS platform for photographers: upload event and wedding photos, share a selection link with clients, and let them pick their favourites — with studio branding and WhatsApp contact built in. Currently in development.",
+    p_fb_tag1: "SaaS", p_fb_tag2: "Photography", p_fb_tag3: "Client Portal", p_fb_tag4: "Events", p_fb_tag5: "In development",
     p_fb_link: "fotobox.vercel.app <span class=\"arw\" aria-hidden=\"true\">↗</span>"
   },
   fr: {
@@ -1128,8 +1179,8 @@ var I18N = {
     p_dkm_desc: "Un espace de gestion pour les studios de production vidéo et photo : clients, projets, factures et planning réunis dans une seule interface, avec connexion Google.",
     p_dkm_tag1: "Dashboard", p_dkm_tag2: "Auth Google", p_dkm_tag3: "Planning", p_dkm_tag4: "Netlify",
     
-    p_wedika_desc: "Projet en cours de développement. Présentation détaillée bientôt disponible.",
-    p_wedika_tag1: "En développement",
+    p_wedika_desc: "Plateforme d'invitations de mariage digitales : créez et partagez des faire-part élégants inspirés de la culture africaine avec enveloppe interactive, gestion des RSVP et musique d'ambiance. Application en cours de développement.",
+    p_wedika_tag1: "SaaS", p_wedika_tag2: "Faire-part digital", p_wedika_tag3: "RSVP", p_wedika_tag4: "Mobile-first", p_wedika_tag5: "En développement",
     
     sec_services_mono: "Ce que je fais",
     sec_services_title: "/Services",
@@ -1168,8 +1219,8 @@ var I18N = {
     foot_role: "© 2026 — Développeur Web",
     foot_top: "Retour en haut ↑",
     
-    p_fb_desc: "Plateforme SaaS pour photographes : uploadez vos photos de mariages et d'événements, partagez un lien de sélection à vos clients, ils choisissent leurs préférées — avec branding studio et contact WhatsApp intégrés.",
-    p_fb_tag1: "SaaS", p_fb_tag2: "Photographie", p_fb_tag3: "Portail client", p_fb_tag4: "Événements",
+    p_fb_desc: "Plateforme SaaS pour photographes : uploadez vos photos de mariages et d'événements, partagez un lien de sélection à vos clients, ils choisissent leurs préférées — avec branding studio et contact WhatsApp intégrés. Application en cours de développement.",
+    p_fb_tag1: "SaaS", p_fb_tag2: "Photographie", p_fb_tag3: "Portail client", p_fb_tag4: "Événements", p_fb_tag5: "En développement",
     p_fb_link: "fotobox.vercel.app <span class=\"arw\" aria-hidden=\"true\">↗</span>"
   }
 };
@@ -1317,6 +1368,45 @@ var I18N = {
     });
   }, { threshold:.12, rootMargin:'0px 0px -8% 0px' });
   items.forEach(function(i){ io.observe(i); });
+})();
+
+/* ---------- Auto-scrolling thumbnail carousels ---------- */
+(function(){
+  document.querySelectorAll('.thumb-carousel').forEach(function(carousel){
+    var thumb = carousel.closest('.thumb');
+    if (!thumb) return;
+    var dots = thumb.querySelectorAll('.thumb-carousel-dots span');
+    var slides = carousel.querySelectorAll('.slide');
+    var total = slides.length;
+    if (total <= 1) return;
+    var current = 0;
+    var timer;
+
+    function goTo(idx){
+      current = (idx + total) % total;
+      slides.forEach(function(s){ s.style.transform = 'translateX(' + (-current * 100) + '%)'; });
+      dots.forEach(function(d, i){ d.classList.toggle('active', i === current); });
+    }
+
+    function next(){ goTo(current + 1); }
+    function startAuto(){ timer = setInterval(next, 2800); }
+    function stopAuto(){ clearInterval(timer); }
+
+    dots.forEach(function(d){
+      d.addEventListener('click', function(e){
+        e.stopPropagation();
+        stopAuto();
+        goTo(parseInt(this.dataset.idx));
+        startAuto();
+      });
+    });
+
+    thumb.addEventListener('mouseenter', stopAuto);
+    thumb.addEventListener('mouseleave', startAuto);
+
+    goTo(0);
+    startAuto();
+  });
 })();
 </script>
 
